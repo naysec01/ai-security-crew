@@ -7,7 +7,7 @@ from mcp_security_review.guard import audit
 from mcp_security_review.guard.clip import clip
 from mcp_security_review.guard.decision import Decision
 from mcp_security_review.guard.events import READ_ONLY_TOOLS, Event
-from mcp_security_review.guard.jev import JevClient, JevError
+from mcp_security_review.guard.jev import JevClient, JevError, configured_key
 from mcp_security_review.guard.policy import (
     Thresholds,
     decide_action,
@@ -24,7 +24,7 @@ MAX_FIELD = 2000
 def is_enabled() -> bool:
     """The guard runs only when a key is set or ASC_GUARD_ENABLE is truthy."""
     flag = os.environ.get("ASC_GUARD_ENABLE", "").lower()
-    return bool(os.environ.get("TYPESAFE_API_KEY")) or flag in ("1", "true", "yes")
+    return bool(configured_key()) or flag in ("1", "true", "yes")
 
 
 def _trim(value: Any) -> Any:

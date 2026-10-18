@@ -8,8 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added — asc-guard for Cursor
+- `asc-guard install --client cursor` writes Cursor's `.cursor/hooks.json` (`--client claude-code` is the default). The guard judges shell and MCP calls before they run, and file writes and web fetches through `preToolUse`; Cursor cannot ask before those, so an ask there becomes a deny with an explanation.
+- The Claude Code plugin asks for an optional TypeSafe API key when it is enabled, so installing the plugin is enough to turn the guard on. Leaving it empty keeps the guard off.
+- Claude Code's hooks step aside when Cursor runs them, so a call is never judged twice.
+
 ### Fixed — asc-guard hardening
-- The protected-file rule is much harder to get around. It now catches redirects after read-only commands (`cat x > .mcp.json`), `sh -c`/`eval`/`pwsh`/`cmd /c` wrappers including PowerShell's `-EncodedCommand`, interpreter one-liners and heredocs, `cd` followed by a relative path, globs and brace expansion, backslash paths, removing or replacing a config folder, different case (macOS), symlinks, a `target_file` argument and filesystem MCP servers. VS Code, Claude Desktop, Cursor hook scripts and the new Windsurf path are protected too. A command too long to check before the hook times out is blocked.
+- The protected-file rule is much harder to get around. It now catches redirects after read-only commands (`cat x > .mcp.json`), `sh -c`/`eval`/`pwsh`/`cmd /c` wrappers including PowerShell's `-EncodedCommand`, interpreter one-liners and heredocs, `cd` followed by a relative path, globs and brace expansion, backslash paths, removing or replacing a config folder, different case (macOS), symlinks, Cursor's `target_file` argument and filesystem MCP servers. VS Code, Claude Desktop, Cursor hook scripts and the new Windsurf path are protected too. A command too long to check before the hook times out is blocked.
 - The protected-file rule runs before anything else, so a bad `ASC_GUARD_*` setting can no longer switch it off.
 - A malformed answer from Jev, an unreadable session file or a failure to save session state no longer crash the hook; the warning about injected content still reaches the agent when saving fails. Any unexpected error fails open with a message instead of a traceback.
 - The hook reads its input as UTF-8 whatever the console code page, so non-English prompts are no longer garbled on Windows.

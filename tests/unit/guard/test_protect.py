@@ -175,6 +175,7 @@ def test_powershell_writes_are_caught(command: str) -> None:
         ("Write", {"file_path": "/repo/.mcp.json"}),
         # Cursor names the file argument differently.
         ("Write", {"target_file": "/repo/.cursor/hooks.json"}),
+        ("Delete", {"target_file": "/repo/.mcp.json"}),
         ("Write", {"file_path": "file:///repo/.mcp.json"}),
         # A filesystem MCP server is just another way to write a file.
         ("mcp__filesystem__write_file", {"path": "/u/.claude/settings.json"}),

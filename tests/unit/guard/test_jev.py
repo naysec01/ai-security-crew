@@ -146,3 +146,10 @@ def test_no_sleep_after_the_last_attempt(monkeypatch: pytest.MonkeyPatch) -> Non
     with pytest.raises(JevError):
         client(handler, timeout=10).ask("s", {})
     assert len(sleeps) == 2  # between the three attempts, not after the last
+
+
+def test_uses_the_key_saved_in_the_plugin(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CLAUDE_PLUGIN_OPTION_TYPESAFE_API_KEY", "plugin-key")
+    assert JevClient().api_key == "plugin-key"
+    monkeypatch.setenv("TYPESAFE_API_KEY", "env-key")
+    assert JevClient().api_key == "env-key"  # an explicit env var wins

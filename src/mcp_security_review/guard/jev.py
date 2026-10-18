@@ -29,6 +29,16 @@ def _timeout_setting() -> float:
     return value if math.isfinite(value) and value > 0 else DEFAULT_TIMEOUT
 
 
+def configured_key() -> str:
+    """TYPESAFE_API_KEY, else the key saved in the Claude Code plugin's settings.
+
+    Claude Code passes plugin settings to hooks as CLAUDE_PLUGIN_OPTION_<KEY>.
+    """
+    return os.environ.get("TYPESAFE_API_KEY") or os.environ.get(
+        "CLAUDE_PLUGIN_OPTION_TYPESAFE_API_KEY", ""
+    )
+
+
 class Answers:
     """Typed access to the `answers` map of a Jev response."""
 
@@ -98,7 +108,7 @@ class JevClient:
         transport: httpx.BaseTransport | None = None,
     ) -> None:
         self.url = url or os.environ.get("ASC_GUARD_JEV_URL", DEFAULT_URL)
-        self.api_key = api_key or os.environ.get("TYPESAFE_API_KEY", "")
+        self.api_key = api_key or configured_key()
         self.model = model or os.environ.get("ASC_GUARD_MODEL", "jev-latest")
         self.timeout = timeout or _timeout_setting()
         self._transport = transport
